@@ -23,6 +23,10 @@ export class Result {
     return !this.#isOk;
   }
 
+  get error() {
+    return this.#error;
+  }
+
   unwrap() {
     if (this.isOk) {
       return this.#value;
