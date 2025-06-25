@@ -16,32 +16,24 @@ import { Err, Ok, Result } from "../utils/result.js";
 function scanDirectory(directoryPath, currentLevel = 0) {
   const items = fs.readdirSync(directoryPath);
 
-  return items
-    .map((item) => {
-      // .git이나 node_modules 같은 폴더를 무시함.
-      // 추후 filterTree.js로 기능을 옮길 것.
-      if (item === ".git" || item === "node_modules") {
-        return null;
-      }
+  return items.map((item) => {
+    const fullPath = path.join(directoryPath, item);
+    const stats = fs.statSync(fullPath); // CLI 환경을 전제하고 있기에 동기방식 사용 (추후 개선 가능)
 
-      const fullPath = path.join(directoryPath, item);
-      const stats = fs.statSync(fullPath); // CLI 환경을 전제하고 있기에 동기방식 사용 (추후 개선 가능)
+    /** @type {TreeNode} */
+    const node = {
+      type: stats.isDirectory() ? NODE_TYPES.DIRECTORY : NODE_TYPES.FILE,
+      name: item,
+      path: fullPath,
+      level: currentLevel,
+    };
 
-      /** @type {TreeNode} */
-      const node = {
-        type: stats.isDirectory() ? NODE_TYPES.DIRECTORY : NODE_TYPES.FILE,
-        name: item,
-        path: fullPath,
-        level: currentLevel,
-      };
+    if (node.type === "directory") {
+      node.children = scanDirectory(fullPath, currentLevel + 1);
+    }
 
-      if (node.type === "directory") {
-        node.children = scanDirectory(fullPath, currentLevel + 1);
-      }
-
-      return node;
-    })
-    .filter(Boolean); // 배열에서 null 값 제거
+    return node;
+  });
 }
 
 /**
