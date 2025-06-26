@@ -2,6 +2,7 @@
 
 import { program } from "commander";
 import { createTree } from "./logic/createTree.js";
+import { validateTree } from "./logic/validateTree.js";
 import { filterTree } from "./logic/filterTree.js";
 import { formatTree } from "./logic/formatTree.js";
 
@@ -19,6 +20,7 @@ program
     console.log(`"${dirPath}" 분석 중...`);
 
     const finalResult = createTree(dirPath)
+      .bind(validateTree)
       .bind((tree) => filterTree(tree, excludeList))
       .bind((filteredTree) => formatTree(filteredTree));
 
