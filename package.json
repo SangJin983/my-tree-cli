@@ -3,21 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "src/cli.js",
+  "main": "src/cli.ts",
   "bin": {
-    "my-tree-cli": "./src/cli.js"
+    "my-tree-cli": "./node_modules/.bin/tsx ./src/cli.ts"
   },
   "scripts": {
-    "dev": "my-tree-cli",
+    "dev": "tsx src/cli.ts",
     "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "commander": "^14.0.0"
+    "commander": "^14.0.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@types/node": "^24.0.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
 }

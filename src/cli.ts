@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import { createTree } from "./logic/createTree.js";
-import { validateTree } from "./logic/validateTree.js";
-import { filterTree } from "./logic/filterTree.js";
-import { formatTree } from "./logic/formatTree.js";
+import { createTree } from "./logic/createTree";
+import { filterTree } from "./logic/filterTree";
+import { formatTree } from "./logic/formatTree";
+import { validateTree } from "./logic/validateTree";
 
 program
   .version("1.0.0")
@@ -14,7 +14,7 @@ program
     "-e, --exclude <items>",
     "제외할 파일들과 폴더를 담은 쉼표 목록 (e.g., 'node_modules,.git')"
   )
-  .action((dirPath, options) => {
+  .action((dirPath: string, options: { exclude?: string }) => {
     const excludeList = options.exclude ? options.exclude.split(",") : [];
 
     console.log(`"${dirPath}" 분석 중...`);
@@ -24,19 +24,19 @@ program
       .bind((tree) => filterTree(tree, excludeList))
       .bind((filteredTree) => formatTree(filteredTree));
 
-    if (finalResult.isOk) {
+    if (finalResult.isOk()) {
       const output = finalResult.unwrap();
       if (output) {
         console.log(output);
       } else {
         console.log(`"${dirPath}"폴더가 비었거나 모두 필터링 되었습니다`);
       }
-      process.exit(0); // 성공적으로 종료 (종료 코드 0)
+      process.exit(0);
     } else {
-      const error = finalResult.error || new Error("알수없는 에러가 발생했습니다.");
+      const error = finalResult.error;
       console.error(`\n❌ Error:`);
       console.error(error.message);
-      process.exit(1); // 에러와 함께 종료 (종료 코드 1)
+      process.exit(1);
     }
   });
 
